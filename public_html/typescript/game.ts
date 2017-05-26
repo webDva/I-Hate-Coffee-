@@ -1,7 +1,7 @@
 /*
  * Template
  */
-module GameModuleName {
+module IHateCoffee {
     /*
      * Boot state for only loading the loading screen
      */
@@ -54,6 +54,11 @@ module GameModuleName {
         }
 
         create() {
+            // create ground
+            let groundBitMapData = this.game.add.bitmapData(this.game.width, 32);
+            groundBitMapData.rect(0, 0, groundBitMapData.width, groundBitMapData.height, "rgb(70, 73, 72)");
+            this.game.cache.addBitmapData("ground", groundBitMapData);
+            let ground = this.game.add.sprite(0, this.game.height - groundBitMapData.height, this.game.cache.getBitmapData("ground"));
         }
 
         update() {
@@ -77,5 +82,5 @@ module GameModuleName {
 }
 
 window.onload = () => {
-    let game = new GameModuleName.Game();
+    let game = new IHateCoffee.Game();
 };

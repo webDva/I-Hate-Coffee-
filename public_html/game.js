@@ -6,8 +6,8 @@ var __extends = (this && this.__extends) || function (d, b) {
 /*
  * Template
  */
-var GameModuleName;
-(function (GameModuleName) {
+var IHateCoffee;
+(function (IHateCoffee) {
     /*
      * Boot state for only loading the loading screen
      */
@@ -29,7 +29,7 @@ var GameModuleName;
         };
         return BootState;
     }(Phaser.State));
-    GameModuleName.BootState = BootState;
+    IHateCoffee.BootState = BootState;
     /*
      * Preload state for actually loading assets
      */
@@ -47,7 +47,7 @@ var GameModuleName;
         };
         return PreloadState;
     }(Phaser.State));
-    GameModuleName.PreloadState = PreloadState;
+    IHateCoffee.PreloadState = PreloadState;
     /*
      * The main game running state
      */
@@ -57,12 +57,17 @@ var GameModuleName;
             return _super.call(this) || this;
         }
         GameState.prototype.create = function () {
+            // create ground
+            var groundBitMapData = this.game.add.bitmapData(this.game.width, 32);
+            groundBitMapData.rect(0, 0, groundBitMapData.width, groundBitMapData.height, "rgb(70, 73, 72)");
+            this.game.cache.addBitmapData("ground", groundBitMapData);
+            var ground = this.game.add.sprite(0, this.game.height - groundBitMapData.height, this.game.cache.getBitmapData("ground"));
         };
         GameState.prototype.update = function () {
         };
         return GameState;
     }(Phaser.State));
-    GameModuleName.GameState = GameState;
+    IHateCoffee.GameState = GameState;
     var Game = (function () {
         function Game() {
             this.game = new Phaser.Game(550, 550, Phaser.AUTO, "phaser");
@@ -75,8 +80,8 @@ var GameModuleName;
         }
         return Game;
     }());
-    GameModuleName.Game = Game;
-})(GameModuleName || (GameModuleName = {}));
+    IHateCoffee.Game = Game;
+})(IHateCoffee || (IHateCoffee = {}));
 window.onload = function () {
-    var game = new GameModuleName.Game();
+    var game = new IHateCoffee.Game();
 };
