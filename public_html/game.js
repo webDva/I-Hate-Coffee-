@@ -48,13 +48,22 @@ var IHateCoffee;
         return PreloadState;
     }(Phaser.State));
     IHateCoffee.PreloadState = PreloadState;
+    // used for controlling player's movement
+    var Direction;
+    (function (Direction) {
+        Direction[Direction["Left"] = 0] = "Left";
+        Direction[Direction["Right"] = 1] = "Right";
+    })(Direction = IHateCoffee.Direction || (IHateCoffee.Direction = {}));
     /*
      * The main game running state
      */
     var GameState = (function (_super) {
         __extends(GameState, _super);
         function GameState() {
-            return _super.call(this) || this;
+            var _this = _super.call(this) || this;
+            // input
+            _this.isAcceptingMovementInput = true; // if the player dies, for example
+            return _this;
         }
         GameState.prototype.create = function () {
             // use arcade physics
@@ -77,12 +86,46 @@ var IHateCoffee;
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
+            // add WASD controls
+            this.controlKeys = this.game.input.keyboard.addKeys({ "left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D });
+        };
+        /*
+         * used for controlling the player's movement, left or right
+         */
+        GameState.prototype.controlPlayer = function (direction) {
+            // if the player is dead or if switching to another state, then don't accept keypress
+            if (!this.isAcceptingMovementInput) {
+                return;
+            }
+            if (direction === IHateCoffee.Direction.Left) {
+                this.player.body.velocity.x = -GameState.MOVEMENT_VELOCITY;
+            }
+            else if (direction === IHateCoffee.Direction.Right) {
+                this.player.body.velocity.x = GameState.MOVEMENT_VELOCITY;
+            }
+        };
+        /*
+         * we'll just poll for keyboard input to control the player using the keys object
+         */
+        GameState.prototype.pollControllInput = function () {
+            if (this.controlKeys.left.isDown) {
+                this.controlPlayer(IHateCoffee.Direction.Left);
+            }
+            else if (this.controlKeys.right.isDown) {
+                this.controlPlayer(IHateCoffee.Direction.Right);
+            }
         };
         GameState.prototype.update = function () {
+            // collisions
             this.game.physics.arcade.collide(this.player, this.ground);
+            // stop the player's horizontal movement
+            this.player.body.velocity.x = 0;
+            // poll for the player's input
+            this.pollControllInput();
         };
         return GameState;
     }(Phaser.State));
+    GameState.MOVEMENT_VELOCITY = 350;
     IHateCoffee.GameState = GameState;
     var Game = (function () {
         function Game() {

@@ -43,14 +43,26 @@ module IHateCoffee {
         }
     }
 
+    // used for controlling player's movement
+    export enum Direction {
+        Left,
+        Right
+    }
+
     /*
      * The main game running state
      */
     export class GameState extends Phaser.State {
         game: Phaser.Game;
 
+        // sprites
         player: Phaser.Sprite;
         ground: Phaser.Sprite;
+
+        // input
+        isAcceptingMovementInput: boolean = true; // if the player dies, for example
+        static MOVEMENT_VELOCITY: number = 350;
+        controlKeys: any; // object for determining what keypresses are used in the game
 
         constructor() {
             super();
@@ -81,10 +93,47 @@ module IHateCoffee {
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
+
+            // add WASD controls
+            this.controlKeys = this.game.input.keyboard.addKeys({"left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D});
+        }
+
+        /*
+         * used for controlling the player's movement, left or right
+         */
+        controlPlayer(direction: IHateCoffee.Direction) {
+            // if the player is dead or if switching to another state, then don't accept keypress
+            if (!this.isAcceptingMovementInput) {
+                return;
+            }
+
+            if (direction === IHateCoffee.Direction.Left) {
+                this.player.body.velocity.x = -GameState.MOVEMENT_VELOCITY;
+            } else if (direction === IHateCoffee.Direction.Right) {
+                this.player.body.velocity.x = GameState.MOVEMENT_VELOCITY;
+            }
+        }
+
+        /*
+         * we'll just poll for keyboard input to control the player using the keys object
+         */
+        pollControllInput() {
+            if (this.controlKeys.left.isDown) {
+                this.controlPlayer(IHateCoffee.Direction.Left);
+            } else if (this.controlKeys.right.isDown) {
+                this.controlPlayer(IHateCoffee.Direction.Right);
+            }
         }
 
         update() {
+            // collisions
             this.game.physics.arcade.collide(this.player, this.ground);
+
+            // stop the player's horizontal movement
+            this.player.body.velocity.x = 0;
+
+            // poll for the player's input
+            this.pollControllInput();
         }
     }
 
