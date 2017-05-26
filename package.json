@@ -1,0 +1,14 @@
+{
+  "name": "Yet Another HTML5 game by Web D.va",
+  "version": "0.0.1",
+  "keywords": [
+    "game",
+    "HTML5",
+    "phaser"
+  ],
+  "author": "Web D.va",
+  "contributors": [],
+  "dependencies": {
+    "phaser-ce": "^2.7.10"
+  }
+}
