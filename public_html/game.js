@@ -57,10 +57,7 @@ var IHateCoffee;
             return _super.call(this) || this;
         }
         GameState.prototype.create = function () {
-            // use P2 physics
-            this.game.physics.startSystem(Phaser.Physics.P2JS);
-            this.game.physics.p2.gravity.y = 250;
-            // and also using arcade physics
+            // use arcade physics
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 250;
             // create ground
@@ -77,12 +74,9 @@ var IHateCoffee;
             playerBitMapData.rect(0, 0, playerBitMapData.width, playerBitMapData.height, "rgb(255, 255, 255");
             this.game.cache.addBitmapData("player", playerBitMapData);
             this.player = this.game.add.sprite(10, 10, this.game.cache.getBitmapData("player"));
-            // add P2 physics, but only for now, because we might change our mind later
-            this.game.physics.p2.enable(this.player, true);
-            this.player.body.clearShapes();
-            this.player.body.addRectangle(32, 64);
+            // add physics body to player
+            this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
-            this.player.body.moveLeft(100);
         };
         GameState.prototype.update = function () {
             this.game.physics.arcade.collide(this.player, this.ground);
