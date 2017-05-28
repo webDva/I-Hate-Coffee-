@@ -105,6 +105,10 @@ module IHateCoffee {
                 let coffee = this.game.add.sprite(this.game.rnd.integerInRange(0, this.game.width - 32), 0, this.game.cache.getBitmapData("coffee"));
                 // add physics body to coffee sprite
                 this.game.physics.arcade.enable(coffee);
+                // create a second timer that will destory the sprite after its lifetime
+                let destoryTimer = this.game.time.create(true);
+                destoryTimer.loop(1700, () => coffee.destroy(), this);
+                destoryTimer.start();
             }, this);
             timer.start();
 

@@ -97,6 +97,10 @@ var IHateCoffee;
                 var coffee = _this.game.add.sprite(_this.game.rnd.integerInRange(0, _this.game.width - 32), 0, _this.game.cache.getBitmapData("coffee"));
                 // add physics body to coffee sprite
                 _this.game.physics.arcade.enable(coffee);
+                // create a second timer that will destory the sprite after its lifetime
+                var destoryTimer = _this.game.time.create(true);
+                destoryTimer.loop(1700, function () { return coffee.destroy(); }, _this);
+                destoryTimer.start();
             }, this);
             timer.start();
             // add WASD controls
