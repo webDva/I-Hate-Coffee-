@@ -94,6 +94,20 @@ module IHateCoffee {
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
 
+            // create coffee sprite
+            let coffeeBitMapData = this.game.add.bitmapData(32, 32);
+            coffeeBitMapData.rect(0, 0, coffeeBitMapData.width, coffeeBitMapData.height, "rgb(80, 44, 10");
+            this.game.cache.addBitmapData("coffee", coffeeBitMapData);
+
+            // timer for spawning falling coffees
+            let timer = this.game.time.create(false);
+            timer.loop(400, () => {
+                let coffee = this.game.add.sprite(this.game.rnd.integerInRange(0, this.game.width - 32), 0, this.game.cache.getBitmapData("coffee"));
+                // add physics body to coffee sprite
+                this.game.physics.arcade.enable(coffee);
+            }, this);
+            timer.start();
+
             // add WASD controls
             this.controlKeys = this.game.input.keyboard.addKeys({"left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D});
         }

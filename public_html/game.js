@@ -66,6 +66,7 @@ var IHateCoffee;
             return _this;
         }
         GameState.prototype.create = function () {
+            var _this = this;
             // use arcade physics
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 250;
@@ -86,6 +87,18 @@ var IHateCoffee;
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
+            // create coffee sprite
+            var coffeeBitMapData = this.game.add.bitmapData(32, 32);
+            coffeeBitMapData.rect(0, 0, coffeeBitMapData.width, coffeeBitMapData.height, "rgb(80, 44, 10");
+            this.game.cache.addBitmapData("coffee", coffeeBitMapData);
+            // timer for spawning falling coffees
+            var timer = this.game.time.create(false);
+            timer.loop(400, function () {
+                var coffee = _this.game.add.sprite(_this.game.rnd.integerInRange(0, _this.game.width - 32), 0, _this.game.cache.getBitmapData("coffee"));
+                // add physics body to coffee sprite
+                _this.game.physics.arcade.enable(coffee);
+            }, this);
+            timer.start();
             // add WASD controls
             this.controlKeys = this.game.input.keyboard.addKeys({ "left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D });
         };
