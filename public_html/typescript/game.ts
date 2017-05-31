@@ -67,6 +67,8 @@ module IHateCoffee {
         numberOfLives: number = 5;
         livesGroup: Phaser.Group;
 
+        coffeeGroup: Phaser.Group;
+
         constructor() {
             super();
         }
@@ -102,12 +104,17 @@ module IHateCoffee {
             coffeeBitMapData.rect(0, 0, coffeeBitMapData.width, coffeeBitMapData.height, "rgb(80, 44, 10");
             this.game.cache.addBitmapData("coffee", coffeeBitMapData);
 
+            // create group for coffees for collision
+            this.coffeeGroup = this.game.add.group();
+
             // timer for spawning falling coffees
             let timer = this.game.time.create(false);
             timer.loop(400, () => {
                 let coffee = this.game.add.sprite(this.game.rnd.integerInRange(0, this.game.width - 32), 0, this.game.cache.getBitmapData("coffee"));
                 // add physics body to coffee sprite
                 this.game.physics.arcade.enable(coffee);
+                // add coffee to its coffeeGroup
+                this.coffeeGroup.add(coffee);
                 // create a second timer that will destory the sprite after its lifetime
                 let destoryTimer = this.game.time.create(true);
                 destoryTimer.loop(2700, () => coffee.destroy(), this);
@@ -162,9 +169,23 @@ module IHateCoffee {
             }
         }
 
+        coffeePlayerCollisionCallback(player: Phaser.Sprite, coffee: Phaser.Sprite) {
+            // for now, just do a little tween and decrement hearts
+            let tween = this.game.add.tween(coffee.scale).to({x: 0, y: 0}, 1400, "Linear", true, 0, -1);
+            tween.yoyo(true);
+            // disable coffe's body
+            coffee.body.enable = false;
+
+            // remove a heart
+            if (this.livesGroup.getFirstAlive()) {
+                this.livesGroup.getFirstAlive().kill();
+            }
+        }
+
         update() {
             // collisions
             this.game.physics.arcade.collide(this.player, this.ground);
+            this.game.physics.arcade.collide(this.player, this.coffeeGroup, this.coffeePlayerCollisionCallback, null, this);
 
             // stop the player's horizontal movement
             this.player.body.velocity.x = 0;
