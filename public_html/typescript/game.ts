@@ -64,6 +64,9 @@ module IHateCoffee {
         static MOVEMENT_VELOCITY: number = 350;
         controlKeys: any; // object for determining what keypresses are used in the game
 
+        numberOfLives: number = 5;
+        livesGroup: Phaser.Group;
+
         constructor() {
             super();
         }
@@ -107,10 +110,26 @@ module IHateCoffee {
                 this.game.physics.arcade.enable(coffee);
                 // create a second timer that will destory the sprite after its lifetime
                 let destoryTimer = this.game.time.create(true);
-                destoryTimer.loop(1700, () => coffee.destroy(), this);
+                destoryTimer.loop(2700, () => coffee.destroy(), this);
                 destoryTimer.start();
             }, this);
             timer.start();
+
+            // create hearts to represent health
+
+            // first, use a red placeholder sprite
+            let heartBitMapData = this.game.add.bitmapData(32, 32);
+            heartBitMapData.circle(16, 16, 16, "rgb(236, 11, 25");
+            this.game.cache.addBitmapData("heart", heartBitMapData);
+
+            // testing
+            //let heart = this.game.add.sprite(32, 32, this.game.cache.getBitmapData("heart"));
+
+            // display hearts based on number of lives available initially
+            this.livesGroup = this.game.add.group();
+            for (let i = 0; i < this.numberOfLives; i++) {
+                this.livesGroup.create((i + 40) * i, 32, this.game.cache.getBitmapData("heart"));
+            }
 
             // add WASD controls
             this.controlKeys = this.game.input.keyboard.addKeys({"left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D});

@@ -63,6 +63,7 @@ var IHateCoffee;
             var _this = _super.call(this) || this;
             // input
             _this.isAcceptingMovementInput = true; // if the player dies, for example
+            _this.numberOfLives = 5;
             return _this;
         }
         GameState.prototype.create = function () {
@@ -99,10 +100,22 @@ var IHateCoffee;
                 _this.game.physics.arcade.enable(coffee);
                 // create a second timer that will destory the sprite after its lifetime
                 var destoryTimer = _this.game.time.create(true);
-                destoryTimer.loop(1700, function () { return coffee.destroy(); }, _this);
+                destoryTimer.loop(2700, function () { return coffee.destroy(); }, _this);
                 destoryTimer.start();
             }, this);
             timer.start();
+            // create hearts to represent health
+            // first, use a red placeholder sprite
+            var heartBitMapData = this.game.add.bitmapData(32, 32);
+            heartBitMapData.circle(16, 16, 16, "rgb(236, 11, 25");
+            this.game.cache.addBitmapData("heart", heartBitMapData);
+            // testing
+            //let heart = this.game.add.sprite(32, 32, this.game.cache.getBitmapData("heart"));
+            // display hearts based on number of lives available initially
+            this.livesGroup = this.game.add.group();
+            for (var i = 0; i < this.numberOfLives; i++) {
+                this.livesGroup.create((i + 40) * i, 32, this.game.cache.getBitmapData("heart"));
+            }
             // add WASD controls
             this.controlKeys = this.game.input.keyboard.addKeys({ "left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D });
         };
