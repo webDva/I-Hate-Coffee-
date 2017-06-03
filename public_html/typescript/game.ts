@@ -67,6 +67,9 @@ module IHateCoffee {
         numberOfLives: number = 5;
         livesGroup: Phaser.Group;
 
+        score: number = 0;
+        textScore: Phaser.Text;
+
         coffeeGroup: Phaser.Group;
 
         constructor() {
@@ -117,7 +120,11 @@ module IHateCoffee {
                 this.coffeeGroup.add(coffee);
                 // create a second timer that will destory the sprite after its lifetime
                 let destoryTimer = this.game.time.create(true);
-                destoryTimer.loop(2700, () => coffee.destroy(), this);
+                destoryTimer.loop(2700, () => {
+                    coffee.destroy();
+                    this.score += 10; // each coffee avoided is worth ten points
+                    this.textScore.text = "Score: " + this.score;
+                }, this);
                 destoryTimer.start();
             }, this);
             timer.start();
@@ -137,6 +144,15 @@ module IHateCoffee {
             for (let i = 0; i < this.numberOfLives; i++) {
                 this.livesGroup.create((i + 40) * i, 32, this.game.cache.getBitmapData("heart"));
             }
+
+            // add score text
+            let textScoreStyle = {
+                font: "4em Impact, sans-serif",
+                fill: "#42f45f",
+                align: "center"
+            };
+            this.textScore = this.game.add.text(this.game.width, 0, "Score: " + this.score, textScoreStyle);
+            this.textScore.anchor.setTo(1, 0);
 
             // add WASD controls
             this.controlKeys = this.game.input.keyboard.addKeys({"left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D});

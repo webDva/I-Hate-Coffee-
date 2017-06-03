@@ -64,6 +64,7 @@ var IHateCoffee;
             // input
             _this.isAcceptingMovementInput = true; // if the player dies, for example
             _this.numberOfLives = 5;
+            _this.score = 0;
             return _this;
         }
         GameState.prototype.create = function () {
@@ -104,7 +105,11 @@ var IHateCoffee;
                 _this.coffeeGroup.add(coffee);
                 // create a second timer that will destory the sprite after its lifetime
                 var destoryTimer = _this.game.time.create(true);
-                destoryTimer.loop(2700, function () { return coffee.destroy(); }, _this);
+                destoryTimer.loop(2700, function () {
+                    coffee.destroy();
+                    _this.score += 10; // each coffee avoided is worth ten points
+                    _this.textScore.text = "Score: " + _this.score;
+                }, _this);
                 destoryTimer.start();
             }, this);
             timer.start();
@@ -120,6 +125,14 @@ var IHateCoffee;
             for (var i = 0; i < this.numberOfLives; i++) {
                 this.livesGroup.create((i + 40) * i, 32, this.game.cache.getBitmapData("heart"));
             }
+            // add score text
+            var textScoreStyle = {
+                font: "4em Impact, sans-serif",
+                fill: "#42f45f",
+                align: "center"
+            };
+            this.textScore = this.game.add.text(this.game.width, 0, "Score: " + this.score, textScoreStyle);
+            this.textScore.anchor.setTo(1, 0);
             // add WASD controls
             this.controlKeys = this.game.input.keyboard.addKeys({ "left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D });
         };
