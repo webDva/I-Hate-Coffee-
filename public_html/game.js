@@ -101,16 +101,16 @@ var IHateCoffee;
                 var coffee = _this.game.add.sprite(_this.game.rnd.integerInRange(0, _this.game.width - 32), 0, _this.game.cache.getBitmapData("coffee"));
                 // add physics body to coffee sprite
                 _this.game.physics.arcade.enable(coffee);
-                // add coffee to its coffeeGroup
-                _this.coffeeGroup.add(coffee);
-                // create a second timer that will destory the sprite after its lifetime
-                var destoryTimer = _this.game.time.create(true);
-                destoryTimer.loop(2700, function () {
-                    coffee.destroy();
+                coffee.body.stopVelocityOnCollide = true; // so maybe the coffees won't move the player
+                // kill this sprite if it's out of bounds, passing the player
+                coffee.checkWorldBounds = true;
+                coffee.outOfBoundsKill = true;
+                coffee.events.onOutOfBounds.add(function () {
                     _this.score += 10; // each coffee avoided is worth ten points
                     _this.textScore.text = "Score: " + _this.score;
-                }, _this);
-                destoryTimer.start();
+                });
+                // add coffee to its coffeeGroup
+                _this.coffeeGroup.add(coffee);
             }, this);
             timer.start();
             // create hearts to represent health
@@ -118,8 +118,6 @@ var IHateCoffee;
             var heartBitMapData = this.game.add.bitmapData(32, 32);
             heartBitMapData.circle(16, 16, 16, "rgb(236, 11, 25");
             this.game.cache.addBitmapData("heart", heartBitMapData);
-            // testing
-            //let heart = this.game.add.sprite(32, 32, this.game.cache.getBitmapData("heart"));
             // display hearts based on number of lives available initially
             this.livesGroup = this.game.add.group();
             for (var i = 0; i < this.numberOfLives; i++) {

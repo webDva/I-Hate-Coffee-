@@ -116,16 +116,16 @@ module IHateCoffee {
                 let coffee = this.game.add.sprite(this.game.rnd.integerInRange(0, this.game.width - 32), 0, this.game.cache.getBitmapData("coffee"));
                 // add physics body to coffee sprite
                 this.game.physics.arcade.enable(coffee);
-                // add coffee to its coffeeGroup
-                this.coffeeGroup.add(coffee);
-                // create a second timer that will destory the sprite after its lifetime
-                let destoryTimer = this.game.time.create(true);
-                destoryTimer.loop(2700, () => {
-                    coffee.destroy();
+                coffee.body.stopVelocityOnCollide = true; // so maybe the coffees won't move the player
+                // kill this sprite if it's out of bounds, passing the player
+                coffee.checkWorldBounds = true;
+                coffee.outOfBoundsKill = true;
+                coffee.events.onOutOfBounds.add(() => {
                     this.score += 10; // each coffee avoided is worth ten points
                     this.textScore.text = "Score: " + this.score;
-                }, this);
-                destoryTimer.start();
+                });
+                // add coffee to its coffeeGroup
+                this.coffeeGroup.add(coffee);
             }, this);
             timer.start();
 
@@ -135,9 +135,6 @@ module IHateCoffee {
             let heartBitMapData = this.game.add.bitmapData(32, 32);
             heartBitMapData.circle(16, 16, 16, "rgb(236, 11, 25");
             this.game.cache.addBitmapData("heart", heartBitMapData);
-
-            // testing
-            //let heart = this.game.add.sprite(32, 32, this.game.cache.getBitmapData("heart"));
 
             // display hearts based on number of lives available initially
             this.livesGroup = this.game.add.group();
