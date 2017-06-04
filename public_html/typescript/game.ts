@@ -123,13 +123,14 @@ module IHateCoffee {
                 let coffee = this.game.add.sprite(this.game.rnd.integerInRange(0, this.game.width - 32), 0, this.game.cache.getBitmapData("coffee"));
                 // add physics body to coffee sprite
                 this.game.physics.arcade.enable(coffee);
-                coffee.body.stopVelocityOnCollide = true; // so maybe the coffees won't move the player
                 // kill this sprite if it's out of bounds, passing the player
                 coffee.checkWorldBounds = true;
                 coffee.outOfBoundsKill = true;
                 coffee.events.onOutOfBounds.add(() => {
-                    this.score += 10; // each coffee avoided is worth ten points
-                    this.textScore.text = "Score: " + this.score;
+                    if (!this.isGameOver) {
+                        this.score += 10; // each coffee avoided is worth ten points
+                        this.textScore.text = "Score: " + this.score;
+                    }
                 });
                 // add coffee to its coffeeGroup
                 this.coffeeGroup.add(coffee);
@@ -218,6 +219,7 @@ module IHateCoffee {
             if (this.numberOfLives === 0) {
                 if (!this.isGameOver) {
                     this.isGameOver = true;
+                    this.isAcceptingMovementInput = false;
                     let gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2,
                         "Game Over!\nYour score: " + this.score,
                         {

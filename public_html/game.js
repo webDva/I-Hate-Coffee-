@@ -102,13 +102,14 @@ var IHateCoffee;
                 var coffee = _this.game.add.sprite(_this.game.rnd.integerInRange(0, _this.game.width - 32), 0, _this.game.cache.getBitmapData("coffee"));
                 // add physics body to coffee sprite
                 _this.game.physics.arcade.enable(coffee);
-                coffee.body.stopVelocityOnCollide = true; // so maybe the coffees won't move the player
                 // kill this sprite if it's out of bounds, passing the player
                 coffee.checkWorldBounds = true;
                 coffee.outOfBoundsKill = true;
                 coffee.events.onOutOfBounds.add(function () {
-                    _this.score += 10; // each coffee avoided is worth ten points
-                    _this.textScore.text = "Score: " + _this.score;
+                    if (!_this.isGameOver) {
+                        _this.score += 10; // each coffee avoided is worth ten points
+                        _this.textScore.text = "Score: " + _this.score;
+                    }
                 });
                 // add coffee to its coffeeGroup
                 _this.coffeeGroup.add(coffee);
@@ -185,6 +186,7 @@ var IHateCoffee;
             if (this.numberOfLives === 0) {
                 if (!this.isGameOver) {
                     this.isGameOver = true;
+                    this.isAcceptingMovementInput = false;
                     var gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2, "Game Over!\nYour score: " + this.score, {
                         font: "8em Impact, sans-serif",
                         fill: "#42f45f",
