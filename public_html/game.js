@@ -198,7 +198,7 @@ var IHateCoffee;
                     gameOverText.alpha = 0.90;
                     // display restart arrow that restarts the game
                     var restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", function () {
-                        _this.game.state.start("GameState");
+                        _this.game.state.restart();
                     }, this);
                     restartButton.scale.setTo(0.4, 0.4);
                     ;

@@ -233,7 +233,7 @@ module IHateCoffee {
 
                     // display restart arrow that restarts the game
                     let restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", () => {
-                        this.game.state.start("GameState");
+                        this.game.state.restart();
                     }, this);
                     restartButton.scale.setTo(0.4, 0.4);;
                     restartButton.anchor.setTo(0.5, 0.5);
