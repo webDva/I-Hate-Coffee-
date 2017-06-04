@@ -36,6 +36,7 @@ module IHateCoffee {
         preload() {
             // Display the loading screen image
             // Load assets
+            this.game.load.image("restartArrow", "assets/restartArrow.png");
         }
 
         create() {
@@ -223,12 +224,22 @@ module IHateCoffee {
                     let gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2,
                         "Game Over!\nYour score: " + this.score,
                         {
-                            font: "8em Impact, sans-serif",
+                            font: "5em Impact, sans-serif",
                             fill: "#42f45f",
                             align: "center"
                         });
                     gameOverText.anchor.setTo(0.5, 0.5);
                     gameOverText.alpha = 0.90;
+
+                    // display restart arrow that restarts the game
+                    let restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", () => {
+                        this.game.state.start("GameState");
+                    }, this);
+                    restartButton.scale.setTo(0.4, 0.4);;
+                    restartButton.anchor.setTo(0.5, 0.5);
+                    restartButton.y = gameOverText.bottom + restartButton.height
+                    // make it rotate
+                    let tween = this.game.add.tween(restartButton).to({rotation: (restartButton.rotation + 6.28) * - 1}, 2500, null, true, 0, -1);
                 }
             }
         }

@@ -41,6 +41,7 @@ var IHateCoffee;
         PreloadState.prototype.preload = function () {
             // Display the loading screen image
             // Load assets
+            this.game.load.image("restartArrow", "assets/restartArrow.png");
         };
         PreloadState.prototype.create = function () {
             this.game.state.start("GameState");
@@ -175,6 +176,7 @@ var IHateCoffee;
             }
         };
         GameState.prototype.update = function () {
+            var _this = this;
             // collisions
             this.game.physics.arcade.collide(this.player, this.ground);
             this.game.physics.arcade.overlap(this.player, this.coffeeGroup, this.coffeePlayerCollisionCallback, null, this);
@@ -188,12 +190,22 @@ var IHateCoffee;
                     this.isGameOver = true;
                     this.isAcceptingMovementInput = false;
                     var gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2, "Game Over!\nYour score: " + this.score, {
-                        font: "8em Impact, sans-serif",
+                        font: "5em Impact, sans-serif",
                         fill: "#42f45f",
                         align: "center"
                     });
                     gameOverText.anchor.setTo(0.5, 0.5);
                     gameOverText.alpha = 0.90;
+                    // display restart arrow that restarts the game
+                    var restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", function () {
+                        _this.game.state.start("GameState");
+                    }, this);
+                    restartButton.scale.setTo(0.4, 0.4);
+                    ;
+                    restartButton.anchor.setTo(0.5, 0.5);
+                    restartButton.y = gameOverText.bottom + restartButton.height;
+                    // make it rotate
+                    var tween = this.game.add.tween(restartButton).to({ rotation: (restartButton.rotation + 6.28) * -1 }, 2500, null, true, 0, -1);
                 }
             }
         };
