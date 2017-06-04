@@ -69,6 +69,13 @@ module IHateCoffee {
 
         score: number = 0;
         textScore: Phaser.Text;
+        isGameOver: boolean = false;
+
+        // for making the difficult vary. the difficulty will change randomly
+        spawnRate: number;
+        static DIFFICULTY_EASY: number = 400;
+        static DIFFICULTY_MEDIUM: number = GameState.DIFFICULTY_EASY * 0.35 + GameState.DIFFICULTY_EASY;
+        static DIFFICULTY_HARD: number = GameState.DIFFICULTY_EASY * 0.66 + GameState.DIFFICULTY_EASY;
 
         coffeeGroup: Phaser.Group;
 
@@ -206,6 +213,22 @@ module IHateCoffee {
 
             // poll for the player's input
             this.pollControllInput();
+
+            // if the lives counter reaches zero, end the game
+            if (this.numberOfLives === 0) {
+                if (!this.isGameOver) {
+                    this.isGameOver = true;
+                    let gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2,
+                        "Game Over!\nYour score: " + this.score,
+                        {
+                            font: "8em Impact, sans-serif",
+                            fill: "#42f45f",
+                            align: "center"
+                        });
+                    gameOverText.anchor.setTo(0.5, 0.5);
+                    gameOverText.alpha = 0.90;
+                }
+            }
         }
     }
 

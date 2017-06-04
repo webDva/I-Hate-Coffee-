@@ -65,6 +65,7 @@ var IHateCoffee;
             _this.isAcceptingMovementInput = true; // if the player dies, for example
             _this.numberOfLives = 5;
             _this.score = 0;
+            _this.isGameOver = false;
             return _this;
         }
         GameState.prototype.create = function () {
@@ -180,10 +181,26 @@ var IHateCoffee;
             this.player.body.velocity.x = 0;
             // poll for the player's input
             this.pollControllInput();
+            // if the lives counter reaches zero, end the game
+            if (this.numberOfLives === 0) {
+                if (!this.isGameOver) {
+                    this.isGameOver = true;
+                    var gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2, "Game Over!\nYour score: " + this.score, {
+                        font: "8em Impact, sans-serif",
+                        fill: "#42f45f",
+                        align: "center"
+                    });
+                    gameOverText.anchor.setTo(0.5, 0.5);
+                    gameOverText.alpha = 0.90;
+                }
+            }
         };
         return GameState;
     }(Phaser.State));
     GameState.MOVEMENT_VELOCITY = 350;
+    GameState.DIFFICULTY_EASY = 400;
+    GameState.DIFFICULTY_MEDIUM = GameState.DIFFICULTY_EASY * 0.35 + GameState.DIFFICULTY_EASY;
+    GameState.DIFFICULTY_HARD = GameState.DIFFICULTY_EASY * 0.66 + GameState.DIFFICULTY_EASY;
     IHateCoffee.GameState = GameState;
     var Game = (function () {
         function Game() {
