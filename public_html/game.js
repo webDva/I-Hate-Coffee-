@@ -166,15 +166,16 @@ var IHateCoffee;
             tween.yoyo(true);
             // disable coffe's body
             coffee.body.enable = false;
-            // remove a heart
+            // remove a heart and decrement the lives counter
             if (this.livesGroup.getFirstAlive()) {
                 this.livesGroup.getFirstAlive().kill();
+                this.numberOfLives--;
             }
         };
         GameState.prototype.update = function () {
             // collisions
             this.game.physics.arcade.collide(this.player, this.ground);
-            this.game.physics.arcade.collide(this.player, this.coffeeGroup, this.coffeePlayerCollisionCallback, null, this);
+            this.game.physics.arcade.overlap(this.player, this.coffeeGroup, this.coffeePlayerCollisionCallback, null, this);
             // stop the player's horizontal movement
             this.player.body.velocity.x = 0;
             // poll for the player's input
