@@ -252,7 +252,7 @@ module IHateCoffee {
         game: Phaser.Game;
 
         constructor() {
-            this.game = new Phaser.Game(550, 550, Phaser.AUTO, "phaser");
+            this.game = new Phaser.Game(800, 600, Phaser.AUTO, "phaser");
 
             /* The boot state will contain an init() for the scale manager and will load the loading screen,
              * while the preloader will display the loading screen and load assets and then start the main game state.
