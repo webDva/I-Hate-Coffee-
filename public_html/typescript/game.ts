@@ -43,6 +43,7 @@ module IHateCoffee {
             this.game.load.image("coffee", "assets/coffee.png");
             this.game.load.image("leftButton", "assets/leftarrow.png");
             this.game.load.image("rightButton", "assets/rightarrow.png");
+            this.game.load.image("heart", "assets/heart.png");
         }
 
         create() {
@@ -126,7 +127,8 @@ module IHateCoffee {
             this.ground.body.allowGravity = false;
 
             // add player sprite
-            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - 80, "iine");
+            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iine");
+            this.player.scale.setTo(2, 2);
 
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
@@ -139,6 +141,7 @@ module IHateCoffee {
             let timer = this.game.time.create(false);
             timer.loop(400, () => {
                 let coffee = this.game.add.sprite(this.game.rnd.integerInRange(0, this.game.width - 32), 0, "coffee");
+                coffee.scale.setTo(2, 2);
                 // add physics body to coffee sprite
                 this.game.physics.arcade.enable(coffee);
                 // kill this sprite if it's out of bounds, passing the player
@@ -155,18 +158,12 @@ module IHateCoffee {
             }, this);
             timer.start();
 
-            // create hearts to represent health
-
-            // first, use a red placeholder sprite
-            let heartBitMapData = this.game.add.bitmapData(32, 32);
-            heartBitMapData.circle(16, 16, 16, "rgb(236, 11, 25");
-            this.game.cache.addBitmapData("heart", heartBitMapData);
-
             // display hearts based on number of lives available initially
             this.livesGroup = this.game.add.group();
             for (let i = 0; i < this.numberOfLives; i++) {
-                this.livesGroup.create((i + 40) * i, 32, this.game.cache.getBitmapData("heart"));
+                this.livesGroup.create((i + 40) * i, 32, "heart");
             }
+            this.livesGroup.reverse();
 
             // add score text
             let textScoreStyle = {
@@ -247,16 +244,21 @@ module IHateCoffee {
         }
 
         coffeePlayerCollisionCallback(player: Phaser.Sprite, coffee: Phaser.Sprite) {
-            // for now, just do a little tween and decrement hearts
-            let tween = this.game.add.tween(coffee.scale).to({x: 0, y: 0}, 1400, "Linear", true, 0, -1);
-            tween.yoyo(true);
+            let tween = this.game.add.tween(coffee.scale).to({x: 0, y: 0}, 200, "Linear", true);
+            tween.onComplete.add(() => {
+                coffee.kill();
+            }, this, 0, coffee);
             // disable coffe's body
             coffee.body.enable = false;
 
             // remove a heart and decrement the lives counter
             if (this.livesGroup.getFirstAlive()) {
-                this.livesGroup.getFirstAlive().kill();
-                this.numberOfLives--;
+                let firstHeart = this.livesGroup.getFirstAlive();
+                let heartTween = this.game.add.tween(firstHeart.scale).to({x: 0, y: 0}, 300, "Linear", true);
+                heartTween.onComplete.add(() => {
+                    firstHeart.kill();
+                    this.numberOfLives--;
+                }, this, 0, firstHeart);
             }
         }
 
@@ -284,6 +286,7 @@ module IHateCoffee {
                         });
                     gameOverText.anchor.setTo(0.5, 0.5);
                     gameOverText.alpha = 0.90;
+                    this.textScore.kill();
 
                     // display restart arrow that restarts the game
                     let restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", () => {

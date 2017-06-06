@@ -48,6 +48,7 @@ var IHateCoffee;
             this.game.load.image("coffee", "assets/coffee.png");
             this.game.load.image("leftButton", "assets/leftarrow.png");
             this.game.load.image("rightButton", "assets/rightarrow.png");
+            this.game.load.image("heart", "assets/heart.png");
         };
         PreloadState.prototype.create = function () {
             this.game.state.start("GameState");
@@ -92,7 +93,8 @@ var IHateCoffee;
             this.ground.body.immovable = true;
             this.ground.body.allowGravity = false;
             // add player sprite
-            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - 80, "iine");
+            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iine");
+            this.player.scale.setTo(2, 2);
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
@@ -102,6 +104,7 @@ var IHateCoffee;
             var timer = this.game.time.create(false);
             timer.loop(400, function () {
                 var coffee = _this.game.add.sprite(_this.game.rnd.integerInRange(0, _this.game.width - 32), 0, "coffee");
+                coffee.scale.setTo(2, 2);
                 // add physics body to coffee sprite
                 _this.game.physics.arcade.enable(coffee);
                 // kill this sprite if it's out of bounds, passing the player
@@ -117,16 +120,12 @@ var IHateCoffee;
                 _this.coffeeGroup.add(coffee);
             }, this);
             timer.start();
-            // create hearts to represent health
-            // first, use a red placeholder sprite
-            var heartBitMapData = this.game.add.bitmapData(32, 32);
-            heartBitMapData.circle(16, 16, 16, "rgb(236, 11, 25");
-            this.game.cache.addBitmapData("heart", heartBitMapData);
             // display hearts based on number of lives available initially
             this.livesGroup = this.game.add.group();
             for (var i = 0; i < this.numberOfLives; i++) {
-                this.livesGroup.create((i + 40) * i, 32, this.game.cache.getBitmapData("heart"));
+                this.livesGroup.create((i + 40) * i, 32, "heart");
             }
+            this.livesGroup.reverse();
             // add score text
             var textScoreStyle = {
                 font: "4em Impact, sans-serif",
@@ -199,15 +198,21 @@ var IHateCoffee;
             }
         };
         GameState.prototype.coffeePlayerCollisionCallback = function (player, coffee) {
-            // for now, just do a little tween and decrement hearts
-            var tween = this.game.add.tween(coffee.scale).to({ x: 0, y: 0 }, 1400, "Linear", true, 0, -1);
-            tween.yoyo(true);
+            var _this = this;
+            var tween = this.game.add.tween(coffee.scale).to({ x: 0, y: 0 }, 200, "Linear", true);
+            tween.onComplete.add(function () {
+                coffee.kill();
+            }, this, 0, coffee);
             // disable coffe's body
             coffee.body.enable = false;
             // remove a heart and decrement the lives counter
             if (this.livesGroup.getFirstAlive()) {
-                this.livesGroup.getFirstAlive().kill();
-                this.numberOfLives--;
+                var firstHeart_1 = this.livesGroup.getFirstAlive();
+                var heartTween = this.game.add.tween(firstHeart_1.scale).to({ x: 0, y: 0 }, 300, "Linear", true);
+                heartTween.onComplete.add(function () {
+                    firstHeart_1.kill();
+                    _this.numberOfLives--;
+                }, this, 0, firstHeart_1);
             }
         };
         GameState.prototype.update = function () {
@@ -230,6 +235,7 @@ var IHateCoffee;
                     });
                     gameOverText.anchor.setTo(0.5, 0.5);
                     gameOverText.alpha = 0.90;
+                    this.textScore.kill();
                     // display restart arrow that restarts the game
                     var restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", function () {
                         _this.game.state.start("PreloadState", true, true);
