@@ -43,6 +43,7 @@ module IHateCoffee {
             this.game.load.image("coffee", "assets/coffee.png");
             this.game.load.image("leftButton", "assets/leftarrow.png");
             this.game.load.image("rightButton", "assets/rightarrow.png");
+            this.game.load.image("heart", "assets/heart.png");
         }
 
         create() {
@@ -157,17 +158,10 @@ module IHateCoffee {
             }, this);
             timer.start();
 
-            // create hearts to represent health
-
-            // first, use a red placeholder sprite
-            let heartBitMapData = this.game.add.bitmapData(32, 32);
-            heartBitMapData.circle(16, 16, 16, "rgb(236, 11, 25");
-            this.game.cache.addBitmapData("heart", heartBitMapData);
-
             // display hearts based on number of lives available initially
             this.livesGroup = this.game.add.group();
             for (let i = 0; i < this.numberOfLives; i++) {
-                this.livesGroup.create((i + 40) * i, 32, this.game.cache.getBitmapData("heart"));
+                this.livesGroup.create((i + 40) * i, 32, "heart");
             }
             this.livesGroup.reverse();
 
