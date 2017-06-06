@@ -42,6 +42,7 @@ var IHateCoffee;
             // Display the loading screen image
             // Load assets
             this.game.load.image("restartArrow", "assets/restartArrow.png");
+            this.game.load.image("iine", "assets/iine.png");
         };
         PreloadState.prototype.create = function () {
             this.game.state.start("GameState");
@@ -86,10 +87,7 @@ var IHateCoffee;
             this.ground.body.immovable = true;
             this.ground.body.allowGravity = false;
             // create player sprite
-            var playerBitMapData = this.game.add.bitmapData(32, 64);
-            playerBitMapData.rect(0, 0, playerBitMapData.width, playerBitMapData.height, "rgb(255, 255, 255");
-            this.game.cache.addBitmapData("player", playerBitMapData);
-            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - 80, this.game.cache.getBitmapData("player"));
+            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - 80, "iine");
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
