@@ -163,7 +163,7 @@ module IHateCoffee {
             for (let i = 0; i < this.numberOfLives; i++) {
                 this.livesGroup.create((i + 40) * i, 32, "heart");
             }
-            this.livesGroup.reverse();
+            this.livesGroup.reverse(); // this will make the harts disappear from right-to-left
 
             // add score text
             let textScoreStyle = {
@@ -257,8 +257,8 @@ module IHateCoffee {
                 let heartTween = this.game.add.tween(firstHeart.scale).to({x: 0, y: 0}, 300, "Linear", true);
                 heartTween.onComplete.add(() => {
                     firstHeart.kill();
-                    this.numberOfLives--;
                 }, this, 0, firstHeart);
+                this.numberOfLives--;
             }
         }
 
@@ -296,7 +296,7 @@ module IHateCoffee {
                     restartButton.anchor.setTo(0.5, 0.5);
                     restartButton.y = gameOverText.bottom + restartButton.height
                     // make it rotate
-                    let tween = this.game.add.tween(restartButton).to({rotation: (restartButton.rotation + 6.28) * - 1}, 2500, null, true, 0, -1);
+                    this.game.add.tween(restartButton).to({rotation: (restartButton.rotation + 6.28) * - 1}, 2500, null, true, 0, -1);
                 }
             }
         }
