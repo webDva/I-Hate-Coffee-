@@ -61,17 +61,15 @@ var IHateCoffee;
     var GameState = (function (_super) {
         __extends(GameState, _super);
         function GameState() {
-            var _this = _super.call(this) || this;
-            _this.numberOfLives = 5;
-            _this.score = 0;
-            return _this;
+            return _super.call(this) || this;
         }
         /*
-         * for setting the boolean variables
+         * using the init method for resetting game variables
          */
         GameState.prototype.init = function () {
-            this.isAcceptingMovementInput = true;
             this.isGameOver = false;
+            this.numberOfLives = 5;
+            this.score = 0;
         };
         GameState.prototype.create = function () {
             var _this = this;
@@ -91,7 +89,7 @@ var IHateCoffee;
             var playerBitMapData = this.game.add.bitmapData(32, 64);
             playerBitMapData.rect(0, 0, playerBitMapData.width, playerBitMapData.height, "rgb(255, 255, 255");
             this.game.cache.addBitmapData("player", playerBitMapData);
-            this.player = this.game.add.sprite(10, 10, this.game.cache.getBitmapData("player"));
+            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - 80, this.game.cache.getBitmapData("player"));
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
@@ -146,7 +144,7 @@ var IHateCoffee;
          */
         GameState.prototype.controlPlayer = function (direction) {
             // if the player is dead or if switching to another state, then don't accept keypress
-            if (!this.isAcceptingMovementInput) {
+            if (this.isGameOver) {
                 return;
             }
             if (direction === IHateCoffee.Direction.Left) {
@@ -192,7 +190,6 @@ var IHateCoffee;
             if (this.numberOfLives === 0) {
                 if (!this.isGameOver) {
                     this.isGameOver = true;
-                    this.isAcceptingMovementInput = false;
                     var gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2, "Game Over!\nYour score: " + this.score, {
                         font: "5em Impact, sans-serif",
                         fill: "#42f45f",
@@ -215,6 +212,7 @@ var IHateCoffee;
         };
         return GameState;
     }(Phaser.State));
+    // input
     GameState.MOVEMENT_VELOCITY = 350;
     GameState.DIFFICULTY_EASY = 400;
     GameState.DIFFICULTY_MEDIUM = GameState.DIFFICULTY_EASY * 0.35 + GameState.DIFFICULTY_EASY;

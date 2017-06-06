@@ -61,14 +61,13 @@ module IHateCoffee {
         ground: Phaser.Sprite;
 
         // input
-        isAcceptingMovementInput: boolean; // if the player dies, for example
         static MOVEMENT_VELOCITY: number = 350;
         controlKeys: any; // object for determining what keypresses are used in the game
 
-        numberOfLives: number = 5;
+        numberOfLives: number;
         livesGroup: Phaser.Group;
 
-        score: number = 0;
+        score: number;
         textScore: Phaser.Text;
         isGameOver: boolean;
 
@@ -85,11 +84,12 @@ module IHateCoffee {
         }
 
         /* 
-         * for setting the boolean variables
+         * using the init method for resetting game variables
          */
         init() {
-            this.isAcceptingMovementInput = true;
             this.isGameOver = false;
+            this.numberOfLives = 5;
+            this.score = 0;
         }
 
         create() {
@@ -112,7 +112,7 @@ module IHateCoffee {
             let playerBitMapData = this.game.add.bitmapData(32, 64);
             playerBitMapData.rect(0, 0, playerBitMapData.width, playerBitMapData.height, "rgb(255, 255, 255");
             this.game.cache.addBitmapData("player", playerBitMapData);
-            this.player = this.game.add.sprite(10, 10, this.game.cache.getBitmapData("player"));
+            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - 80, this.game.cache.getBitmapData("player"));
 
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
@@ -177,7 +177,7 @@ module IHateCoffee {
          */
         controlPlayer(direction: IHateCoffee.Direction) {
             // if the player is dead or if switching to another state, then don't accept keypress
-            if (!this.isAcceptingMovementInput) {
+            if (this.isGameOver) {
                 return;
             }
 
@@ -228,7 +228,6 @@ module IHateCoffee {
             if (this.numberOfLives === 0) {
                 if (!this.isGameOver) {
                     this.isGameOver = true;
-                    this.isAcceptingMovementInput = false;
                     let gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2,
                         "Game Over!\nYour score: " + this.score,
                         {
