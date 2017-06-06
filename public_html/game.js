@@ -198,7 +198,8 @@ var IHateCoffee;
             }
         };
         GameState.prototype.coffeePlayerCollisionCallback = function (player, coffee) {
-            var tween = this.game.add.tween(coffee.scale).to({ x: 0, y: 0 }, 1400, "Linear", true);
+            var _this = this;
+            var tween = this.game.add.tween(coffee.scale).to({ x: 0, y: 0 }, 200, "Linear", true);
             tween.onComplete.add(function () {
                 coffee.kill();
             }, this, 0, coffee);
@@ -206,8 +207,12 @@ var IHateCoffee;
             coffee.body.enable = false;
             // remove a heart and decrement the lives counter
             if (this.livesGroup.getFirstAlive()) {
-                this.livesGroup.getFirstAlive().kill();
-                this.numberOfLives--;
+                var firstHeart_1 = this.livesGroup.getFirstAlive();
+                var heartTween = this.game.add.tween(firstHeart_1.scale).to({ x: 0, y: 0 }, 300, "Linear", true);
+                heartTween.onComplete.add(function () {
+                    firstHeart_1.kill();
+                    _this.numberOfLives--;
+                }, this, 0, firstHeart_1);
             }
         };
         GameState.prototype.update = function () {

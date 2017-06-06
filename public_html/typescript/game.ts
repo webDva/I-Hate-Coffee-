@@ -244,7 +244,7 @@ module IHateCoffee {
         }
 
         coffeePlayerCollisionCallback(player: Phaser.Sprite, coffee: Phaser.Sprite) {
-            let tween = this.game.add.tween(coffee.scale).to({x: 0, y: 0}, 1400, "Linear", true);
+            let tween = this.game.add.tween(coffee.scale).to({x: 0, y: 0}, 200, "Linear", true);
             tween.onComplete.add(() => {
                 coffee.kill();
             }, this, 0, coffee);
@@ -253,8 +253,12 @@ module IHateCoffee {
 
             // remove a heart and decrement the lives counter
             if (this.livesGroup.getFirstAlive()) {
-                this.livesGroup.getFirstAlive().kill();
-                this.numberOfLives--;
+                let firstHeart = this.livesGroup.getFirstAlive();
+                let heartTween = this.game.add.tween(firstHeart.scale).to({x: 0, y: 0}, 300, "Linear", true);
+                heartTween.onComplete.add(() => {
+                    firstHeart.kill();
+                    this.numberOfLives--;
+                }, this, 0, firstHeart);
             }
         }
 
