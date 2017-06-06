@@ -43,6 +43,7 @@ var IHateCoffee;
             // Load assets
             this.game.load.image("restartArrow", "assets/restartArrow.png");
             this.game.load.image("iine", "assets/iine.png");
+            this.game.load.image("coffee", "assets/coffee.png");
         };
         PreloadState.prototype.create = function () {
             this.game.state.start("GameState");
@@ -86,21 +87,17 @@ var IHateCoffee;
             this.game.physics.arcade.enable(this.ground);
             this.ground.body.immovable = true;
             this.ground.body.allowGravity = false;
-            // create player sprite
+            // add player sprite
             this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - 80, "iine");
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
-            // create coffee sprite
-            var coffeeBitMapData = this.game.add.bitmapData(32, 32);
-            coffeeBitMapData.rect(0, 0, coffeeBitMapData.width, coffeeBitMapData.height, "rgb(80, 44, 10");
-            this.game.cache.addBitmapData("coffee", coffeeBitMapData);
             // create group for coffees for collision
             this.coffeeGroup = this.game.add.group();
             // timer for spawning falling coffees
             var timer = this.game.time.create(false);
             timer.loop(400, function () {
-                var coffee = _this.game.add.sprite(_this.game.rnd.integerInRange(0, _this.game.width - 32), 0, _this.game.cache.getBitmapData("coffee"));
+                var coffee = _this.game.add.sprite(_this.game.rnd.integerInRange(0, _this.game.width - 32), 0, "coffee");
                 // add physics body to coffee sprite
                 _this.game.physics.arcade.enable(coffee);
                 // kill this sprite if it's out of bounds, passing the player

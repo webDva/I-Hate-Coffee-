@@ -38,6 +38,7 @@ module IHateCoffee {
             // Load assets
             this.game.load.image("restartArrow", "assets/restartArrow.png");
             this.game.load.image("iine", "assets/iine.png");
+            this.game.load.image("coffee", "assets/coffee.png");
         }
 
         create() {
@@ -109,17 +110,12 @@ module IHateCoffee {
             this.ground.body.immovable = true;
             this.ground.body.allowGravity = false;
 
-            // create player sprite
+            // add player sprite
             this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - 80, "iine");
 
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
-
-            // create coffee sprite
-            let coffeeBitMapData = this.game.add.bitmapData(32, 32);
-            coffeeBitMapData.rect(0, 0, coffeeBitMapData.width, coffeeBitMapData.height, "rgb(80, 44, 10");
-            this.game.cache.addBitmapData("coffee", coffeeBitMapData);
 
             // create group for coffees for collision
             this.coffeeGroup = this.game.add.group();
@@ -127,7 +123,7 @@ module IHateCoffee {
             // timer for spawning falling coffees
             let timer = this.game.time.create(false);
             timer.loop(400, () => {
-                let coffee = this.game.add.sprite(this.game.rnd.integerInRange(0, this.game.width - 32), 0, this.game.cache.getBitmapData("coffee"));
+                let coffee = this.game.add.sprite(this.game.rnd.integerInRange(0, this.game.width - 32), 0, "coffee");
                 // add physics body to coffee sprite
                 this.game.physics.arcade.enable(coffee);
                 // kill this sprite if it's out of bounds, passing the player
