@@ -41,8 +41,8 @@ module IHateCoffee {
             this.game.load.image("restartArrow", "assets/restartArrow.png");
             this.game.load.image("iine", "assets/iine.png");
             this.game.load.image("coffee", "assets/coffee.png");
-            this.game.load.image("leftButton", "assets/leftArrow.png");
-            this.game.load.image("rightButton", "assets/rightArrow.png");
+            this.game.load.image("leftButton", "assets/leftarrow.png");
+            this.game.load.image("rightButton", "assets/rightarrow.png");
         }
 
         create() {
