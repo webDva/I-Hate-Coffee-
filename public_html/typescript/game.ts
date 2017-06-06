@@ -126,7 +126,8 @@ module IHateCoffee {
             this.ground.body.allowGravity = false;
 
             // add player sprite
-            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - 80, "iine");
+            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iine");
+            this.player.scale.setTo(2, 2);
 
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
@@ -139,6 +140,7 @@ module IHateCoffee {
             let timer = this.game.time.create(false);
             timer.loop(400, () => {
                 let coffee = this.game.add.sprite(this.game.rnd.integerInRange(0, this.game.width - 32), 0, "coffee");
+                coffee.scale.setTo(2, 2);
                 // add physics body to coffee sprite
                 this.game.physics.arcade.enable(coffee);
                 // kill this sprite if it's out of bounds, passing the player
@@ -247,9 +249,10 @@ module IHateCoffee {
         }
 
         coffeePlayerCollisionCallback(player: Phaser.Sprite, coffee: Phaser.Sprite) {
-            // for now, just do a little tween and decrement hearts
-            let tween = this.game.add.tween(coffee.scale).to({x: 0, y: 0}, 1400, "Linear", true, 0, -1);
-            tween.yoyo(true);
+            let tween = this.game.add.tween(coffee.scale).to({x: 0, y: 0}, 1400, "Linear", true);
+            tween.onComplete.add(() => {
+                coffee.kill();
+            }, this, 0, coffee);
             // disable coffe's body
             coffee.body.enable = false;
 
