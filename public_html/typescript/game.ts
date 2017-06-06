@@ -12,7 +12,9 @@ module IHateCoffee {
 
         init() {
             // Set scale using ScaleManager
+            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             // Set background color
+            this.game.stage.backgroundColor = "#1b58ba";
         }
 
         preload() {

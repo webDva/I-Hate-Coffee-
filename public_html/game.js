@@ -18,7 +18,9 @@ var IHateCoffee;
         }
         BootState.prototype.init = function () {
             // Set scale using ScaleManager
+            this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
             // Set background color
+            this.game.stage.backgroundColor = "#1b58ba";
         };
         BootState.prototype.preload = function () {
             // Load loading screen image
