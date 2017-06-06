@@ -169,6 +169,7 @@ module IHateCoffee {
             for (let i = 0; i < this.numberOfLives; i++) {
                 this.livesGroup.create((i + 40) * i, 32, this.game.cache.getBitmapData("heart"));
             }
+            this.livesGroup.reverse();
 
             // add score text
             let textScoreStyle = {
