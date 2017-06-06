@@ -46,6 +46,8 @@ var IHateCoffee;
             this.game.load.image("restartArrow", "assets/restartArrow.png");
             this.game.load.image("iine", "assets/iine.png");
             this.game.load.image("coffee", "assets/coffee.png");
+            this.game.load.image("leftButton", "assets/leftArrow.png");
+            this.game.load.image("rightButton", "assets/rightArrow.png");
         };
         PreloadState.prototype.create = function () {
             this.game.state.start("GameState");
@@ -135,6 +137,31 @@ var IHateCoffee;
             this.textScore.anchor.setTo(1, 0);
             // add WASD controls
             this.controlKeys = this.game.input.keyboard.addKeys({ "left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D });
+            // add oncscreen controls to the screen, but only if touch is available
+            if (this.game.device.touch) {
+                this.leftButton = this.game.add.button(40, 380, "leftButton", null, this);
+                this.leftButton.fixedToCamera = true;
+                this.leftButton.alpha = 0.4;
+                this.leftButton.events.onInputDown.add(function () {
+                    _this.isLeftButtonPressed = true;
+                });
+                this.leftButton.events.onInputUp.add(function () {
+                    _this.isLeftButtonPressed = false;
+                });
+                this.rightButton = this.game.add.button(this.game.width - 40, 380, "rightButton", null, this);
+                this.rightButton.anchor.x = 1;
+                this.rightButton.fixedToCamera = true;
+                this.rightButton.alpha = 0.4;
+                this.rightButton.events.onInputDown.add(function () {
+                    _this.isRightButtonPressed = true;
+                });
+                this.rightButton.events.onInputUp.add(function () {
+                    _this.isRightButtonPressed = false;
+                });
+            }
+            // add gamepad controls support for XBOX 360 controller
+            this.game.input.gamepad.start();
+            this.pad1 = this.game.input.gamepad.pad1;
         };
         /*
          * used for controlling the player's movement, left or right
@@ -155,11 +182,20 @@ var IHateCoffee;
          * we'll just poll for keyboard input to control the player using the keys object
          */
         GameState.prototype.pollControllInput = function () {
-            if (this.controlKeys.left.isDown) {
+            if (this.controlKeys.left.isDown || this.isLeftButtonPressed) {
                 this.controlPlayer(IHateCoffee.Direction.Left);
             }
-            else if (this.controlKeys.right.isDown) {
+            else if (this.controlKeys.right.isDown || this.isRightButtonPressed) {
                 this.controlPlayer(IHateCoffee.Direction.Right);
+            }
+            // listening for gamepad controller input        
+            if (this.game.input.gamepad.supported && this.game.input.gamepad.active && this.pad1.connected) {
+                if (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_LEFT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) < -0.1) {
+                    this.controlPlayer(IHateCoffee.Direction.Left);
+                }
+                else if (this.pad1.isDown(Phaser.Gamepad.XBOX360_DPAD_RIGHT) || this.pad1.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X) > 0.1) {
+                    this.controlPlayer(IHateCoffee.Direction.Right);
+                }
             }
         };
         GameState.prototype.coffeePlayerCollisionCallback = function (player, coffee) {
