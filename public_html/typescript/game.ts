@@ -61,7 +61,7 @@ module IHateCoffee {
         ground: Phaser.Sprite;
 
         // input
-        isAcceptingMovementInput: boolean = true; // if the player dies, for example
+        isAcceptingMovementInput: boolean; // if the player dies, for example
         static MOVEMENT_VELOCITY: number = 350;
         controlKeys: any; // object for determining what keypresses are used in the game
 
@@ -70,7 +70,7 @@ module IHateCoffee {
 
         score: number = 0;
         textScore: Phaser.Text;
-        isGameOver: boolean = false;
+        isGameOver: boolean;
 
         // for making the difficult vary. the difficulty will change randomly
         spawnRate: number;
@@ -82,6 +82,14 @@ module IHateCoffee {
 
         constructor() {
             super();
+        }
+
+        /* 
+         * for setting the boolean variables
+         */
+        init() {
+            this.isAcceptingMovementInput = true;
+            this.isGameOver = false;
         }
 
         create() {
@@ -233,7 +241,7 @@ module IHateCoffee {
 
                     // display restart arrow that restarts the game
                     let restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", () => {
-                        this.game.state.restart();
+                        this.game.state.start("PreloadState", true, true);
                     }, this);
                     restartButton.scale.setTo(0.4, 0.4);;
                     restartButton.anchor.setTo(0.5, 0.5);

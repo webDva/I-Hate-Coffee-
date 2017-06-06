@@ -62,13 +62,17 @@ var IHateCoffee;
         __extends(GameState, _super);
         function GameState() {
             var _this = _super.call(this) || this;
-            // input
-            _this.isAcceptingMovementInput = true; // if the player dies, for example
             _this.numberOfLives = 5;
             _this.score = 0;
-            _this.isGameOver = false;
             return _this;
         }
+        /*
+         * for setting the boolean variables
+         */
+        GameState.prototype.init = function () {
+            this.isAcceptingMovementInput = true;
+            this.isGameOver = false;
+        };
         GameState.prototype.create = function () {
             var _this = this;
             // use arcade physics
@@ -198,7 +202,7 @@ var IHateCoffee;
                     gameOverText.alpha = 0.90;
                     // display restart arrow that restarts the game
                     var restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", function () {
-                        _this.game.state.restart();
+                        _this.game.state.start("PreloadState", true, true);
                     }, this);
                     restartButton.scale.setTo(0.4, 0.4);
                     ;
