@@ -49,6 +49,7 @@ var IHateCoffee;
             this.game.load.image("rightButton", "assets/rightarrow.png");
             this.game.load.image("heart", "assets/heart.png");
             this.game.load.spritesheet("iineSpriteSheet", "assets/iineSpriteSheet.png", 32, 64, 5);
+            this.game.load.audio("hitSound", "assets/hit.wav");
         };
         PreloadState.prototype.create = function () {
             this.game.state.start("GameState");
@@ -92,6 +93,8 @@ var IHateCoffee;
             this.game.physics.arcade.enable(this.ground);
             this.ground.body.immovable = true;
             this.ground.body.allowGravity = false;
+            // add hit sound
+            this.hitSound = this.game.add.audio("hitSound");
             // add player sprite
             this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iineSpriteSheet", 0);
             this.player.scale.setTo(2, 2);
@@ -218,8 +221,9 @@ var IHateCoffee;
                 }, this, 0, firstHeart_1);
                 this.numberOfLives--;
             }
-            // play the hit animation
+            // play the hit animation and sound
             this.hitAnimation.play(10);
+            this.hitSound.play();
         };
         GameState.prototype.update = function () {
             var _this = this;

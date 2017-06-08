@@ -44,6 +44,8 @@ module IHateCoffee {
             this.game.load.image("rightButton", "assets/rightarrow.png");
             this.game.load.image("heart", "assets/heart.png");
             this.game.load.spritesheet("iineSpriteSheet", "assets/iineSpriteSheet.png", 32, 64, 5);
+
+            this.game.load.audio("hitSound", "assets/hit.wav");
         }
 
         create() {
@@ -79,6 +81,8 @@ module IHateCoffee {
         isGameOver: boolean;
 
         hitAnimation: Phaser.Animation;
+
+        hitSound: Phaser.Sound;
 
         // for making the difficult vary. the difficulty will change randomly
         spawnRate: number;
@@ -127,6 +131,9 @@ module IHateCoffee {
             this.game.physics.arcade.enable(this.ground);
             this.ground.body.immovable = true;
             this.ground.body.allowGravity = false;
+
+            // add hit sound
+            this.hitSound = this.game.add.audio("hitSound");
 
             // add player sprite
             this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iineSpriteSheet", 0);
@@ -269,8 +276,9 @@ module IHateCoffee {
                 this.numberOfLives--;
             }
 
-            // play the hit animation
+            // play the hit animation and sound
             this.hitAnimation.play(10);
+            this.hitSound.play();
         }
 
         update() {
