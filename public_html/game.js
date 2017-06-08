@@ -44,11 +44,11 @@ var IHateCoffee;
             // Display the loading screen image
             // Load assets
             this.game.load.image("restartArrow", "assets/restartArrow.png");
-            this.game.load.image("iine", "assets/iine.png");
             this.game.load.image("coffee", "assets/coffee.png");
             this.game.load.image("leftButton", "assets/leftarrow.png");
             this.game.load.image("rightButton", "assets/rightarrow.png");
             this.game.load.image("heart", "assets/heart.png");
+            this.game.load.spritesheet("iineSpriteSheet", "assets/iineSpriteSheet.png", 32, 64, 5);
         };
         PreloadState.prototype.create = function () {
             this.game.state.start("GameState");
@@ -93,8 +93,13 @@ var IHateCoffee;
             this.ground.body.immovable = true;
             this.ground.body.allowGravity = false;
             // add player sprite
-            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iine");
+            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iineSpriteSheet", 0);
             this.player.scale.setTo(2, 2);
+            // add animation to player sprite
+            this.hitAnimation = this.player.animations.add("hit", [1, 2, 3, 4]);
+            this.hitAnimation.onComplete.add(function () {
+                _this.player.frame = 0; // reset the frame back to the non-animation one
+            }, this);
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
@@ -213,6 +218,8 @@ var IHateCoffee;
                 }, this, 0, firstHeart_1);
                 this.numberOfLives--;
             }
+            // play the hit animation
+            this.hitAnimation.play(10);
         };
         GameState.prototype.update = function () {
             var _this = this;
