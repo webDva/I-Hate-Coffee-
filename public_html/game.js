@@ -44,11 +44,12 @@ var IHateCoffee;
             // Display the loading screen image
             // Load assets
             this.game.load.image("restartArrow", "assets/restartArrow.png");
-            this.game.load.image("iine", "assets/iine.png");
             this.game.load.image("coffee", "assets/coffee.png");
             this.game.load.image("leftButton", "assets/leftarrow.png");
             this.game.load.image("rightButton", "assets/rightarrow.png");
             this.game.load.image("heart", "assets/heart.png");
+            this.game.load.spritesheet("iineSpriteSheet", "assets/iineSpriteSheet.png", 32, 64, 5);
+            this.game.load.audio("hitSound", "assets/hit.wav");
         };
         PreloadState.prototype.create = function () {
             this.game.state.start("GameState");
@@ -92,9 +93,16 @@ var IHateCoffee;
             this.game.physics.arcade.enable(this.ground);
             this.ground.body.immovable = true;
             this.ground.body.allowGravity = false;
+            // add hit sound
+            this.hitSound = this.game.add.audio("hitSound");
             // add player sprite
-            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iine");
+            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iineSpriteSheet", 0);
             this.player.scale.setTo(2, 2);
+            // add animation to player sprite
+            this.hitAnimation = this.player.animations.add("hit", [1, 2, 3, 4]);
+            this.hitAnimation.onComplete.add(function () {
+                _this.player.frame = 0; // reset the frame back to the non-animation one
+            }, this);
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
             this.player.body.collideWorldBounds = true;
@@ -125,7 +133,7 @@ var IHateCoffee;
             for (var i = 0; i < this.numberOfLives; i++) {
                 this.livesGroup.create((i + 40) * i, 32, "heart");
             }
-            this.livesGroup.reverse();
+            this.livesGroup.reverse(); // this will make the harts disappear from right-to-left
             // add score text
             var textScoreStyle = {
                 font: "4em Impact, sans-serif",
@@ -198,7 +206,6 @@ var IHateCoffee;
             }
         };
         GameState.prototype.coffeePlayerCollisionCallback = function (player, coffee) {
-            var _this = this;
             var tween = this.game.add.tween(coffee.scale).to({ x: 0, y: 0 }, 200, "Linear", true);
             tween.onComplete.add(function () {
                 coffee.kill();
@@ -211,9 +218,12 @@ var IHateCoffee;
                 var heartTween = this.game.add.tween(firstHeart_1.scale).to({ x: 0, y: 0 }, 300, "Linear", true);
                 heartTween.onComplete.add(function () {
                     firstHeart_1.kill();
-                    _this.numberOfLives--;
                 }, this, 0, firstHeart_1);
+                this.numberOfLives--;
             }
+            // play the hit animation and sound
+            this.hitAnimation.play(10);
+            this.hitSound.play();
         };
         GameState.prototype.update = function () {
             var _this = this;
@@ -245,7 +255,7 @@ var IHateCoffee;
                     restartButton.anchor.setTo(0.5, 0.5);
                     restartButton.y = gameOverText.bottom + restartButton.height;
                     // make it rotate
-                    var tween = this.game.add.tween(restartButton).to({ rotation: (restartButton.rotation + 6.28) * -1 }, 2500, null, true, 0, -1);
+                    this.game.add.tween(restartButton).to({ rotation: (restartButton.rotation + 6.28) * -1 }, 2500, null, true, 0, -1);
                 }
             }
         };

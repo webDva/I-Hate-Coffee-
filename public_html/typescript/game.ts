@@ -39,11 +39,13 @@ module IHateCoffee {
             // Display the loading screen image
             // Load assets
             this.game.load.image("restartArrow", "assets/restartArrow.png");
-            this.game.load.image("iine", "assets/iine.png");
             this.game.load.image("coffee", "assets/coffee.png");
             this.game.load.image("leftButton", "assets/leftarrow.png");
             this.game.load.image("rightButton", "assets/rightarrow.png");
             this.game.load.image("heart", "assets/heart.png");
+            this.game.load.spritesheet("iineSpriteSheet", "assets/iineSpriteSheet.png", 32, 64, 5);
+
+            this.game.load.audio("hitSound", "assets/hit.wav");
         }
 
         create() {
@@ -77,6 +79,10 @@ module IHateCoffee {
         score: number;
         textScore: Phaser.Text;
         isGameOver: boolean;
+
+        hitAnimation: Phaser.Animation;
+
+        hitSound: Phaser.Sound;
 
         // for making the difficult vary. the difficulty will change randomly
         spawnRate: number;
@@ -126,9 +132,18 @@ module IHateCoffee {
             this.ground.body.immovable = true;
             this.ground.body.allowGravity = false;
 
+            // add hit sound
+            this.hitSound = this.game.add.audio("hitSound");
+
             // add player sprite
-            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iine");
+            this.player = this.game.add.sprite(this.game.world.centerX, this.ground.top - (64 * 2 + 10), "iineSpriteSheet", 0);
             this.player.scale.setTo(2, 2);
+
+            // add animation to player sprite
+            this.hitAnimation = this.player.animations.add("hit", [1, 2, 3, 4]);
+            this.hitAnimation.onComplete.add(() => {
+                this.player.frame = 0; // reset the frame back to the non-animation one
+            }, this);
 
             // add physics body to player
             this.game.physics.arcade.enable(this.player);
@@ -163,7 +178,7 @@ module IHateCoffee {
             for (let i = 0; i < this.numberOfLives; i++) {
                 this.livesGroup.create((i + 40) * i, 32, "heart");
             }
-            this.livesGroup.reverse();
+            this.livesGroup.reverse(); // this will make the harts disappear from right-to-left
 
             // add score text
             let textScoreStyle = {
@@ -257,9 +272,13 @@ module IHateCoffee {
                 let heartTween = this.game.add.tween(firstHeart.scale).to({x: 0, y: 0}, 300, "Linear", true);
                 heartTween.onComplete.add(() => {
                     firstHeart.kill();
-                    this.numberOfLives--;
                 }, this, 0, firstHeart);
+                this.numberOfLives--;
             }
+
+            // play the hit animation and sound
+            this.hitAnimation.play(10);
+            this.hitSound.play();
         }
 
         update() {
@@ -296,7 +315,7 @@ module IHateCoffee {
                     restartButton.anchor.setTo(0.5, 0.5);
                     restartButton.y = gameOverText.bottom + restartButton.height
                     // make it rotate
-                    let tween = this.game.add.tween(restartButton).to({rotation: (restartButton.rotation + 6.28) * - 1}, 2500, null, true, 0, -1);
+                    this.game.add.tween(restartButton).to({rotation: (restartButton.rotation + 6.28) * - 1}, 2500, null, true, 0, -1);
                 }
             }
         }
