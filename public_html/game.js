@@ -19,8 +19,6 @@ var IHateCoffee;
         BootState.prototype.init = function () {
             // Set scale using ScaleManager
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            // Set background color
-            this.game.stage.backgroundColor = "#1b58ba";
         };
         BootState.prototype.preload = function () {
             // Load loading screen image
@@ -87,6 +85,7 @@ var IHateCoffee;
             this.game.cache.addBitmapData("seperator", seperator);
             this.game.add.sprite(0, 0, this.game.cache.getBitmapData("seperator"));
             this.iHateCoffeeLogo.bringToTop();
+            this.game.stage.backgroundColor = "#0d35a3";
         };
         return MainMenuState;
     }(Phaser.State));
@@ -115,6 +114,8 @@ var IHateCoffee;
         };
         GameState.prototype.create = function () {
             var _this = this;
+            // Set background color
+            this.game.stage.backgroundColor = "#1b58ba";
             // use arcade physics
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 250;
