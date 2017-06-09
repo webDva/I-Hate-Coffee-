@@ -165,7 +165,7 @@ module IHateCoffee {
                 coffee.events.onOutOfBounds.add(() => {
                     if (!this.isGameOver) {
                         this.score += 10; // each coffee avoided is worth ten points
-                        this.textScore.text = "Score: " + this.score;
+                        this.textScore.text = "" + this.score;
                     }
                 });
                 // add coffee to its coffeeGroup
@@ -182,11 +182,12 @@ module IHateCoffee {
 
             // add score text
             let textScoreStyle = {
-                font: "4em Impact, sans-serif",
+                font: '4em "Segoe UI", Impact, sans-serif',
+                fontWeight: "700",
                 fill: "#42f45f",
                 align: "center"
             };
-            this.textScore = this.game.add.text(this.game.width, 0, "Score: " + this.score, textScoreStyle);
+            this.textScore = this.game.add.text(this.game.width, 0, "" + this.score, textScoreStyle);
             this.textScore.anchor.setTo(1, 0);
 
             // add WASD controls
@@ -297,9 +298,10 @@ module IHateCoffee {
                 if (!this.isGameOver) {
                     this.isGameOver = true;
                     let gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2,
-                        "Game Over!\nYour score: " + this.score,
+                        "Game Over!\nScore: " + this.score,
                         {
-                            font: "5em Impact, sans-serif",
+                            font: '5em "Segoe UI", Impact, sans-serif',
+                            fontWeight: "600",
                             fill: "#42f45f",
                             align: "center"
                         });

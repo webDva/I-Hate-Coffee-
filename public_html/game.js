@@ -121,7 +121,7 @@ var IHateCoffee;
                 coffee.events.onOutOfBounds.add(function () {
                     if (!_this.isGameOver) {
                         _this.score += 10; // each coffee avoided is worth ten points
-                        _this.textScore.text = "Score: " + _this.score;
+                        _this.textScore.text = "" + _this.score;
                     }
                 });
                 // add coffee to its coffeeGroup
@@ -136,11 +136,12 @@ var IHateCoffee;
             this.livesGroup.reverse(); // this will make the harts disappear from right-to-left
             // add score text
             var textScoreStyle = {
-                font: "4em Impact, sans-serif",
+                font: '4em "Segoe UI", Impact, sans-serif',
+                fontWeight: "700",
                 fill: "#42f45f",
                 align: "center"
             };
-            this.textScore = this.game.add.text(this.game.width, 0, "Score: " + this.score, textScoreStyle);
+            this.textScore = this.game.add.text(this.game.width, 0, "" + this.score, textScoreStyle);
             this.textScore.anchor.setTo(1, 0);
             // add WASD controls
             this.controlKeys = this.game.input.keyboard.addKeys({ "left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D });
@@ -238,8 +239,9 @@ var IHateCoffee;
             if (this.numberOfLives === 0) {
                 if (!this.isGameOver) {
                     this.isGameOver = true;
-                    var gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2, "Game Over!\nYour score: " + this.score, {
-                        font: "5em Impact, sans-serif",
+                    var gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2, "Game Over!\nScore: " + this.score, {
+                        font: '5em "Segoe UI", Impact, sans-serif',
+                        fontWeight: "600",
                         fill: "#42f45f",
                         align: "center"
                     });
