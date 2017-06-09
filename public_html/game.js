@@ -22,6 +22,7 @@ var IHateCoffee;
         };
         BootState.prototype.preload = function () {
             // Load loading screen image
+            this.game.load.image("loadingScreen", "assets/pantsuweb3.png");
         };
         BootState.prototype.create = function () {
             // Start true loading state
@@ -40,6 +41,20 @@ var IHateCoffee;
         }
         PreloadState.prototype.preload = function () {
             // Display the loading screen image
+            var loadingScreenImage = this.game.add.image(this.game.world.centerX, this.game.world.centerY, "loadingScreen");
+            loadingScreenImage.anchor.set(0.5, 0.5);
+            loadingScreenImage.scale.set(0.3, 0.3);
+            // Web D.va brand text
+            var textStyle = {
+                font: "5.5em Tahoma, Impact, sans-serif",
+                fontWeight: "600",
+                fill: "#ffffff",
+                align: "center"
+            };
+            var welcomeMessage = this.game.add.text(this.game.world.centerX, 0, "A Web D.va game, バカ", textStyle);
+            // just making the brand name text display directly below the loading screen
+            welcomeMessage.y = loadingScreenImage.y + loadingScreenImage.height / 2 + welcomeMessage.height / 2;
+            welcomeMessage.anchor.set(0.5, 0.5);
             // Load assets
             this.game.load.image("restartArrow", "assets/restartArrow.png");
             this.game.load.image("coffee", "assets/coffee.png");
@@ -285,7 +300,7 @@ var IHateCoffee;
                     this.textScore.kill();
                     // display restart arrow that restarts the game
                     var restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", function () {
-                        _this.game.state.start("PreloadState", true, true);
+                        _this.game.state.start("BootState", true, true);
                     }, this);
                     restartButton.scale.setTo(0.4, 0.4);
                     ;
