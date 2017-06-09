@@ -19,6 +19,8 @@ var IHateCoffee;
         BootState.prototype.init = function () {
             // Set scale using ScaleManager
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            // also set the fullscreen scale mode
+            this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         };
         BootState.prototype.preload = function () {
             // Load loading screen image
@@ -86,6 +88,8 @@ var IHateCoffee;
             this.iHateCoffeeLogo.scale.setTo(0.5, 0.5);
             // and start button at the very bottom
             this.startButton = this.game.add.button(this.game.world.centerX, this.game.world.height, "startButton", function () {
+                if (_this.game.scale.compatibility.supportsFullScreen)
+                    _this.game.scale.startFullScreen(false);
                 _this.game.state.start("GameState");
             }, this);
             this.startButton.anchor.setTo(0.5, 1);
@@ -300,6 +304,8 @@ var IHateCoffee;
                     this.textScore.kill();
                     // display restart arrow that restarts the game
                     var restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", function () {
+                        if (_this.game.scale.compatibility.supportsFullScreen)
+                            _this.game.scale.stopFullScreen();
                         _this.game.state.start("BootState", true, true);
                     }, this);
                     restartButton.scale.setTo(0.4, 0.4);

@@ -13,6 +13,8 @@ module IHateCoffee {
         init() {
             // Set scale using ScaleManager
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+            // also set the fullscreen scale mode
+            this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         }
 
         preload() {
@@ -88,6 +90,7 @@ module IHateCoffee {
 
             // and start button at the very bottom
             this.startButton = this.game.add.button(this.game.world.centerX, this.game.world.height, "startButton", () => {
+                if (this.game.scale.compatibility.supportsFullScreen) this.game.scale.startFullScreen(false);
                 this.game.state.start("GameState");
             }, this);
             this.startButton.anchor.setTo(0.5, 1);
@@ -370,6 +373,7 @@ module IHateCoffee {
 
                     // display restart arrow that restarts the game
                     let restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", () => {
+                        if (this.game.scale.compatibility.supportsFullScreen) this.game.scale.stopFullScreen();
                         this.game.state.start("BootState", true, true);
                     }, this);
                     restartButton.scale.setTo(0.4, 0.4);;
