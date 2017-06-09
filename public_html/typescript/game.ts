@@ -215,8 +215,8 @@ module IHateCoffee {
             this.textScore = this.game.add.text(this.game.width, 0, "" + this.score, textScoreStyle);
             this.textScore.anchor.setTo(1, 0);
 
-            // add WASD controls
-            this.controlKeys = this.game.input.keyboard.addKeys({"left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D});
+            // add arrow key controls
+            this.controlKeys = this.game.input.keyboard.addKeys({"left": Phaser.KeyCode.LEFT, "right": Phaser.KeyCode.RIGHT});
 
             // add oncscreen controls to the screen, but only if touch is available
             if (this.game.device.touch) {
