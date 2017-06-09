@@ -51,6 +51,7 @@ var IHateCoffee;
             this.game.load.spritesheet("iineSpriteSheet", "assets/iineSpriteSheet.png", 32, 64, 5);
             this.game.load.image("iHateCoffeeLogo", "assets/iHateCoffeeLogo.png");
             this.game.load.image("startButton", "assets/startButton.png");
+            this.game.load.image("instructions", "assets/menuInstructions.png");
             this.game.load.audio("hitSound", "assets/hit.wav");
         };
         PreloadState.prototype.create = function () {
@@ -76,6 +77,10 @@ var IHateCoffee;
             }, this);
             this.startButton.anchor.setTo(0.5, 1);
             this.startButton.scale.setTo(0.2, 0.2);
+            // add instructions
+            this.instructions = this.game.add.sprite(this.game.world.centerX, this.startButton.top - 10, "instructions");
+            this.instructions.anchor.setTo(0.5, 1);
+            this.instructions.scale.setTo(0.6, 0.6);
         };
         return MainMenuState;
     }(Phaser.State));
