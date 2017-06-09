@@ -82,6 +82,13 @@ module IHateCoffee {
             this.instructions = this.game.add.sprite(this.game.world.centerX, this.startButton.top - 10, "instructions");
             this.instructions.anchor.setTo(0.5, 1);
             this.instructions.scale.setTo(0.6, 0.6);
+
+            // add a sprite that will help seperate the logo from the instructions and start button
+            let seperator = this.game.add.bitmapData(this.game.width, this.iHateCoffeeLogo.height);
+            seperator.rect(0, 0, this.game.width, this.iHateCoffeeLogo.height + 15, "rgb(112, 0, 255)");
+            this.game.cache.addBitmapData("seperator", seperator);
+            this.game.add.sprite(0, 0, this.game.cache.getBitmapData("seperator"));
+            this.iHateCoffeeLogo.bringToTop();
         }
     }
 
