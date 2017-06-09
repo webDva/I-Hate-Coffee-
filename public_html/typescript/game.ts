@@ -13,12 +13,13 @@ module IHateCoffee {
         init() {
             // Set scale using ScaleManager
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            // Set background color
-            this.game.stage.backgroundColor = "#1b58ba";
+            // also set the fullscreen scale mode
+            this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         }
 
         preload() {
             // Load loading screen image
+            this.game.load.image("loadingScreen", "assets/pantsuweb3.png");
         }
 
         create() {
@@ -37,6 +38,22 @@ module IHateCoffee {
 
         preload() {
             // Display the loading screen image
+            let loadingScreenImage = this.game.add.image(this.game.world.centerX, this.game.world.centerY, "loadingScreen");
+            loadingScreenImage.anchor.set(0.5, 0.5);
+            loadingScreenImage.scale.set(0.3, 0.3);
+
+            // Web D.va brand text
+            let textStyle = {
+                font: "5.5em Tahoma, Impact, sans-serif",
+                fontWeight: "600",
+                fill: "#ffffff",
+                align: "center"
+            };
+            let welcomeMessage = this.game.add.text(this.game.world.centerX, 0, "A Web D.va game, バカ", textStyle);
+            // just making the brand name text display directly below the loading screen
+            welcomeMessage.y = loadingScreenImage.y + loadingScreenImage.height / 2 + welcomeMessage.height / 2;
+            welcomeMessage.anchor.set(0.5, 0.5);
+
             // Load assets
             this.game.load.image("restartArrow", "assets/restartArrow.png");
             this.game.load.image("coffee", "assets/coffee.png");
@@ -44,12 +61,54 @@ module IHateCoffee {
             this.game.load.image("rightButton", "assets/rightarrow.png");
             this.game.load.image("heart", "assets/heart.png");
             this.game.load.spritesheet("iineSpriteSheet", "assets/iineSpriteSheet.png", 32, 64, 5);
+            this.game.load.image("iHateCoffeeLogo", "assets/iHateCoffeeLogo.png");
+            this.game.load.image("startButton", "assets/startButton.png");
+            this.game.load.image("instructions", "assets/menuInstructions.png");
 
             this.game.load.audio("hitSound", "assets/hit.wav");
         }
 
         create() {
-            this.game.state.start("GameState");
+            this.game.state.start("MainMenuState");
+        }
+    }
+
+    export class MainMenuState extends Phaser.State {
+        iHateCoffeeLogo: Phaser.Sprite;
+        startButton: Phaser.Button;
+        instructions: Phaser.Sprite;
+
+        constructor() {
+            super();
+        }
+
+        create() {
+            // allowing space for the instructions, so logo at the very top
+            this.iHateCoffeeLogo = this.game.add.sprite(this.game.world.centerX, 0, "iHateCoffeeLogo");
+            this.iHateCoffeeLogo.anchor.setTo(0.5, 0);
+            this.iHateCoffeeLogo.scale.setTo(0.5, 0.5);
+
+            // and start button at the very bottom
+            this.startButton = this.game.add.button(this.game.world.centerX, this.game.world.height, "startButton", () => {
+                if (this.game.scale.compatibility.supportsFullScreen) this.game.scale.startFullScreen(false);
+                this.game.state.start("GameState");
+            }, this);
+            this.startButton.anchor.setTo(0.5, 1);
+            this.startButton.scale.setTo(0.2, 0.2);
+
+            // add instructions
+            this.instructions = this.game.add.sprite(this.game.world.centerX, this.startButton.top - 10, "instructions");
+            this.instructions.anchor.setTo(0.5, 1);
+            this.instructions.scale.setTo(0.6, 0.6);
+
+            // add a sprite that will help seperate the logo from the instructions and start button
+            let seperator = this.game.add.bitmapData(this.game.width, this.iHateCoffeeLogo.height);
+            seperator.rect(0, 0, this.game.width, this.iHateCoffeeLogo.height + 15, "rgb(112, 0, 255)");
+            this.game.cache.addBitmapData("seperator", seperator);
+            this.game.add.sprite(0, 0, this.game.cache.getBitmapData("seperator"));
+            this.iHateCoffeeLogo.bringToTop();
+
+            this.game.stage.backgroundColor = "#0d35a3";
         }
     }
 
@@ -117,6 +176,9 @@ module IHateCoffee {
         }
 
         create() {
+            // Set background color
+            this.game.stage.backgroundColor = "#1b58ba";
+
             // use arcade physics
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 250;
@@ -165,7 +227,7 @@ module IHateCoffee {
                 coffee.events.onOutOfBounds.add(() => {
                     if (!this.isGameOver) {
                         this.score += 10; // each coffee avoided is worth ten points
-                        this.textScore.text = "Score: " + this.score;
+                        this.textScore.text = "" + this.score;
                     }
                 });
                 // add coffee to its coffeeGroup
@@ -182,15 +244,16 @@ module IHateCoffee {
 
             // add score text
             let textScoreStyle = {
-                font: "4em Impact, sans-serif",
+                font: '4em "Segoe UI", Impact, sans-serif',
+                fontWeight: "700",
                 fill: "#42f45f",
                 align: "center"
             };
-            this.textScore = this.game.add.text(this.game.width, 0, "Score: " + this.score, textScoreStyle);
+            this.textScore = this.game.add.text(this.game.width, 0, "" + this.score, textScoreStyle);
             this.textScore.anchor.setTo(1, 0);
 
-            // add WASD controls
-            this.controlKeys = this.game.input.keyboard.addKeys({"left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D});
+            // add arrow key controls
+            this.controlKeys = this.game.input.keyboard.addKeys({"left": Phaser.KeyCode.LEFT, "right": Phaser.KeyCode.RIGHT});
 
             // add oncscreen controls to the screen, but only if touch is available
             if (this.game.device.touch) {
@@ -297,9 +360,10 @@ module IHateCoffee {
                 if (!this.isGameOver) {
                     this.isGameOver = true;
                     let gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2,
-                        "Game Over!\nYour score: " + this.score,
+                        "Game Over!\nScore: " + this.score,
                         {
-                            font: "5em Impact, sans-serif",
+                            font: '5em "Segoe UI", Impact, sans-serif',
+                            fontWeight: "600",
                             fill: "#42f45f",
                             align: "center"
                         });
@@ -309,7 +373,8 @@ module IHateCoffee {
 
                     // display restart arrow that restarts the game
                     let restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", () => {
-                        this.game.state.start("PreloadState", true, true);
+                        if (this.game.scale.compatibility.supportsFullScreen) this.game.scale.stopFullScreen();
+                        this.game.state.start("BootState", true, true);
                     }, this);
                     restartButton.scale.setTo(0.4, 0.4);;
                     restartButton.anchor.setTo(0.5, 0.5);
@@ -331,6 +396,7 @@ module IHateCoffee {
              * while the preloader will display the loading screen and load assets and then start the main game state.
              */
             this.game.state.add("BootState", BootState, true);
+            this.game.state.add("MainMenuState", MainMenuState);
             this.game.state.add("PreloadState", PreloadState);
             this.game.state.add("GameState", GameState);
         }

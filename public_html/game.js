@@ -19,11 +19,12 @@ var IHateCoffee;
         BootState.prototype.init = function () {
             // Set scale using ScaleManager
             this.game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
-            // Set background color
-            this.game.stage.backgroundColor = "#1b58ba";
+            // also set the fullscreen scale mode
+            this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
         };
         BootState.prototype.preload = function () {
             // Load loading screen image
+            this.game.load.image("loadingScreen", "assets/pantsuweb3.png");
         };
         BootState.prototype.create = function () {
             // Start true loading state
@@ -42,6 +43,20 @@ var IHateCoffee;
         }
         PreloadState.prototype.preload = function () {
             // Display the loading screen image
+            var loadingScreenImage = this.game.add.image(this.game.world.centerX, this.game.world.centerY, "loadingScreen");
+            loadingScreenImage.anchor.set(0.5, 0.5);
+            loadingScreenImage.scale.set(0.3, 0.3);
+            // Web D.va brand text
+            var textStyle = {
+                font: "5.5em Tahoma, Impact, sans-serif",
+                fontWeight: "600",
+                fill: "#ffffff",
+                align: "center"
+            };
+            var welcomeMessage = this.game.add.text(this.game.world.centerX, 0, "A Web D.va game, バカ", textStyle);
+            // just making the brand name text display directly below the loading screen
+            welcomeMessage.y = loadingScreenImage.y + loadingScreenImage.height / 2 + welcomeMessage.height / 2;
+            welcomeMessage.anchor.set(0.5, 0.5);
             // Load assets
             this.game.load.image("restartArrow", "assets/restartArrow.png");
             this.game.load.image("coffee", "assets/coffee.png");
@@ -49,14 +64,51 @@ var IHateCoffee;
             this.game.load.image("rightButton", "assets/rightarrow.png");
             this.game.load.image("heart", "assets/heart.png");
             this.game.load.spritesheet("iineSpriteSheet", "assets/iineSpriteSheet.png", 32, 64, 5);
+            this.game.load.image("iHateCoffeeLogo", "assets/iHateCoffeeLogo.png");
+            this.game.load.image("startButton", "assets/startButton.png");
+            this.game.load.image("instructions", "assets/menuInstructions.png");
             this.game.load.audio("hitSound", "assets/hit.wav");
         };
         PreloadState.prototype.create = function () {
-            this.game.state.start("GameState");
+            this.game.state.start("MainMenuState");
         };
         return PreloadState;
     }(Phaser.State));
     IHateCoffee.PreloadState = PreloadState;
+    var MainMenuState = (function (_super) {
+        __extends(MainMenuState, _super);
+        function MainMenuState() {
+            return _super.call(this) || this;
+        }
+        MainMenuState.prototype.create = function () {
+            var _this = this;
+            // allowing space for the instructions, so logo at the very top
+            this.iHateCoffeeLogo = this.game.add.sprite(this.game.world.centerX, 0, "iHateCoffeeLogo");
+            this.iHateCoffeeLogo.anchor.setTo(0.5, 0);
+            this.iHateCoffeeLogo.scale.setTo(0.5, 0.5);
+            // and start button at the very bottom
+            this.startButton = this.game.add.button(this.game.world.centerX, this.game.world.height, "startButton", function () {
+                if (_this.game.scale.compatibility.supportsFullScreen)
+                    _this.game.scale.startFullScreen(false);
+                _this.game.state.start("GameState");
+            }, this);
+            this.startButton.anchor.setTo(0.5, 1);
+            this.startButton.scale.setTo(0.2, 0.2);
+            // add instructions
+            this.instructions = this.game.add.sprite(this.game.world.centerX, this.startButton.top - 10, "instructions");
+            this.instructions.anchor.setTo(0.5, 1);
+            this.instructions.scale.setTo(0.6, 0.6);
+            // add a sprite that will help seperate the logo from the instructions and start button
+            var seperator = this.game.add.bitmapData(this.game.width, this.iHateCoffeeLogo.height);
+            seperator.rect(0, 0, this.game.width, this.iHateCoffeeLogo.height + 15, "rgb(112, 0, 255)");
+            this.game.cache.addBitmapData("seperator", seperator);
+            this.game.add.sprite(0, 0, this.game.cache.getBitmapData("seperator"));
+            this.iHateCoffeeLogo.bringToTop();
+            this.game.stage.backgroundColor = "#0d35a3";
+        };
+        return MainMenuState;
+    }(Phaser.State));
+    IHateCoffee.MainMenuState = MainMenuState;
     // used for controlling player's movement
     var Direction;
     (function (Direction) {
@@ -81,6 +133,8 @@ var IHateCoffee;
         };
         GameState.prototype.create = function () {
             var _this = this;
+            // Set background color
+            this.game.stage.backgroundColor = "#1b58ba";
             // use arcade physics
             this.game.physics.startSystem(Phaser.Physics.ARCADE);
             this.game.physics.arcade.gravity.y = 250;
@@ -121,7 +175,7 @@ var IHateCoffee;
                 coffee.events.onOutOfBounds.add(function () {
                     if (!_this.isGameOver) {
                         _this.score += 10; // each coffee avoided is worth ten points
-                        _this.textScore.text = "Score: " + _this.score;
+                        _this.textScore.text = "" + _this.score;
                     }
                 });
                 // add coffee to its coffeeGroup
@@ -136,14 +190,15 @@ var IHateCoffee;
             this.livesGroup.reverse(); // this will make the harts disappear from right-to-left
             // add score text
             var textScoreStyle = {
-                font: "4em Impact, sans-serif",
+                font: '4em "Segoe UI", Impact, sans-serif',
+                fontWeight: "700",
                 fill: "#42f45f",
                 align: "center"
             };
-            this.textScore = this.game.add.text(this.game.width, 0, "Score: " + this.score, textScoreStyle);
+            this.textScore = this.game.add.text(this.game.width, 0, "" + this.score, textScoreStyle);
             this.textScore.anchor.setTo(1, 0);
-            // add WASD controls
-            this.controlKeys = this.game.input.keyboard.addKeys({ "left": Phaser.KeyCode.A, "right": Phaser.KeyCode.D });
+            // add arrow key controls
+            this.controlKeys = this.game.input.keyboard.addKeys({ "left": Phaser.KeyCode.LEFT, "right": Phaser.KeyCode.RIGHT });
             // add oncscreen controls to the screen, but only if touch is available
             if (this.game.device.touch) {
                 this.leftButton = this.game.add.button(40, 380, "leftButton", null, this);
@@ -238,8 +293,9 @@ var IHateCoffee;
             if (this.numberOfLives === 0) {
                 if (!this.isGameOver) {
                     this.isGameOver = true;
-                    var gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2, "Game Over!\nYour score: " + this.score, {
-                        font: "5em Impact, sans-serif",
+                    var gameOverText = this.game.add.text(this.game.camera.width / 2, this.game.camera.height / 2, "Game Over!\nScore: " + this.score, {
+                        font: '5em "Segoe UI", Impact, sans-serif',
+                        fontWeight: "600",
                         fill: "#42f45f",
                         align: "center"
                     });
@@ -248,7 +304,9 @@ var IHateCoffee;
                     this.textScore.kill();
                     // display restart arrow that restarts the game
                     var restartButton = this.game.add.button(this.game.camera.width / 2, 0, "restartArrow", function () {
-                        _this.game.state.start("PreloadState", true, true);
+                        if (_this.game.scale.compatibility.supportsFullScreen)
+                            _this.game.scale.stopFullScreen();
+                        _this.game.state.start("BootState", true, true);
                     }, this);
                     restartButton.scale.setTo(0.4, 0.4);
                     ;
@@ -274,6 +332,7 @@ var IHateCoffee;
              * while the preloader will display the loading screen and load assets and then start the main game state.
              */
             this.game.state.add("BootState", BootState, true);
+            this.game.state.add("MainMenuState", MainMenuState);
             this.game.state.add("PreloadState", PreloadState);
             this.game.state.add("GameState", GameState);
         }
