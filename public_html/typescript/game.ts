@@ -44,12 +44,37 @@ module IHateCoffee {
             this.game.load.image("rightButton", "assets/rightarrow.png");
             this.game.load.image("heart", "assets/heart.png");
             this.game.load.spritesheet("iineSpriteSheet", "assets/iineSpriteSheet.png", 32, 64, 5);
+            this.game.load.image("iHateCoffeeLogo", "assets/iHateCoffeeLogo.png");
+            this.game.load.image("startButton", "assets/startButton.png");
 
             this.game.load.audio("hitSound", "assets/hit.wav");
         }
 
         create() {
-            this.game.state.start("GameState");
+            this.game.state.start("MainMenuState");
+        }
+    }
+
+    export class MainMenuState extends Phaser.State {
+        iHateCoffeeLogo: Phaser.Sprite;
+        startButton: Phaser.Button;
+
+        constructor() {
+            super();
+        }
+
+        create() {
+            // allowing space for the instructions, so logo at the very top
+            this.iHateCoffeeLogo = this.game.add.sprite(this.game.world.centerX, 0, "iHateCoffeeLogo");
+            this.iHateCoffeeLogo.anchor.setTo(0.5, 0);
+            this.iHateCoffeeLogo.scale.setTo(0.5, 0.5);
+
+            // and start button at the very bottom
+            this.startButton = this.game.add.button(this.game.world.centerX, this.game.world.height, "startButton", () => {
+                this.game.state.start("GameState");
+            }, this);
+            this.startButton.anchor.setTo(0.5, 1);
+            this.startButton.scale.setTo(0.2, 0.2);
         }
     }
 
@@ -333,6 +358,7 @@ module IHateCoffee {
              * while the preloader will display the loading screen and load assets and then start the main game state.
              */
             this.game.state.add("BootState", BootState, true);
+            this.game.state.add("MainMenuState", MainMenuState);
             this.game.state.add("PreloadState", PreloadState);
             this.game.state.add("GameState", GameState);
         }
